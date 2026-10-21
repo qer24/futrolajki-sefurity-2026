@@ -1,12 +1,28 @@
-﻿import express from "express";
+import express from "express";
 import cors from "cors";
 import { db } from "./db.js";
 
 const app = express();
+const APP_PASSWORD = process.env.APP_PASSWORD ?? "admin";
+
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+app.post("/api/auth/login", (req, res) => {
+    const password = String(req.body?.password ?? "");
+
+    if (!password) {
+        return res.status(400).json({ ok: false, error: "password is required" });
+    }
+
+    if (password !== APP_PASSWORD) {
+        return res.status(401).json({ ok: false, error: "invalid password" });
+    }
+
+    return res.json({ ok: true });
+});
 
 app.get("/api/todos", (_req, res) => {
     const todos = db.prepare("SELECT * FROM todos ORDER BY id DESC").all();
