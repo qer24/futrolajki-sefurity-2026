@@ -14,7 +14,8 @@
         apiFetch,
         primaryKey = "id",
         columns = [],
-        fields = []
+        fields = [],
+        onChange = () => {}
     } = $props();
 
     let items = $state([]);
@@ -53,6 +54,7 @@
             });
             dialogOpen = false;
             loadData();
+            onChange();
         } catch (error) {
             console.error("Save failed:", error);
         }
@@ -63,6 +65,7 @@
         try {
             await apiFetch(`${apiEndpoint}/${id}`, { method: "DELETE" });
             loadData();
+            onChange();
         } catch (error) {
             console.error("Delete failed:", error);
         }

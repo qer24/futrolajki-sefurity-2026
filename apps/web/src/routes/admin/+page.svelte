@@ -32,24 +32,21 @@
     const dutyColumns = [
         { key: "id", label: "ID" },
         { key: "user_id", label: "User ID" },
-        { key: "start_time", label: "Start Time", format: (val) => new Date(val).toLocaleString() },
-        { key: "end_time", label: "End Time", format: (val) => new Date(val).toLocaleString() }
+        { key: "start_time", label: "Start Time", format: (val) => val ? new Date(val).toLocaleString() : "-" },
+        { key: "end_time", label: "End Time", format: (val) => val ? new Date(val).toLocaleString() : "-" }
     ];
 
-    // Convert to $state so the UI updates when options are fetched
     let dutyFields = $state([
-        { key: "user_id", label: "User", type: "select", options: [] }, // Changed to select
+        { key: "user_id", label: "User", type: "select", options: [] },
         { key: "start_time", label: "Start Time", type: "datetime-local" },
         { key: "end_time", label: "End Time", type: "datetime-local" }
     ]);
 
-    // Fetch users on mount and populate the select options
-    onMount(async () => {
+    async function fetchUsersForSelect() {
         try {
             const response = await apiFetch("/users");
             const users = await response.json();
 
-            // Map the returned users into { value, label } format
             dutyFields[0].options = users.map(user => ({
                 value: user.id,
                 label: `${user.nickname} (ID: ${user.id})`
@@ -57,6 +54,10 @@
         } catch (error) {
             console.error("Failed to load users for duty select:", error);
         }
+    }
+
+    onMount(() => {
+        fetchUsersForSelect();
     });
 </script>
 
@@ -70,6 +71,7 @@
                 {apiFetch}
                 columns={userColumns}
                 fields={userFields}
+                onChange={fetchUsersForSelect}
         />
 
         <CrudTable
