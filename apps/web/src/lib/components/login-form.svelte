@@ -40,7 +40,7 @@
 			}
 
 			setAuthenticated(password);
-			await goto(resolve('/dashboard'));
+			await goto(resolve('/admin'));
 		} catch {
 			error = 'Nie udało się połączyć z API';
 		} finally {

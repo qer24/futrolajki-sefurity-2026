@@ -40,6 +40,7 @@ app.post("/api/auth/login", (req, res) => {
     return res.json({ ok: true });
 });
 
+// Authentication middleware for all subsequent routes
 app.use("/api", (req, res, next) => {
     const password = req.header("x-api-password");
 
@@ -52,29 +53,102 @@ app.use("/api", (req, res, next) => {
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-app.get("/api/todos", (_req, res) => {
-    const todos = db.prepare("SELECT * FROM todos ORDER BY id DESC").all();
-    res.json(todos);
+
+// ==========================================
+// USERS ROUTES
+// ==========================================
+
+app.get("/api/users", (_req, res) => {
+    const users = db.prepare("SELECT * FROM users ORDER BY id DESC").all();
+    res.json(users);
 });
 
-app.post("/api/todos", (req, res) => {
-    const title = String(req.body?.title ?? "").trim();
-    if (!title) return res.status(400).json({ error: "title is required" });
+app.post("/api/users", (req, res) => {
+    const { tag_nfc, nickname, rank } = req.body;
 
-    const info = db.prepare("INSERT INTO todos (title) VALUES (?)").run(title);
-    const todo = db.prepare("SELECT * FROM todos WHERE id = ?").get(info.lastInsertRowid);
-    res.status(201).json(todo);
+    if (!tag_nfc || !nickname || !rank) {
+        return res.status(400).json({ error: "tag_nfc, nickname, and rank are required" });
+    }
+
+    const info = db.prepare(`
+        INSERT INTO users (tag_nfc, nickname, rank) 
+        VALUES (?, ?, ?)
+    `).run(tag_nfc, nickname, rank);
+
+    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(info.lastInsertRowid);
+    res.status(201).json(user);
 });
 
-app.patch("/api/todos/:id", (req, res) => {
-    db.prepare("UPDATE todos SET done = ? WHERE id = ?").run(req.body.done ? 1 : 0, req.params.id);
+app.put("/api/users/:id", (req, res) => {
+    const { tag_nfc, nickname, rank } = req.body;
+
+    if (!tag_nfc || !nickname || !rank) {
+        return res.status(400).json({ error: "tag_nfc, nickname, and rank are required" });
+    }
+
+    db.prepare(`
+        UPDATE users 
+        SET tag_nfc = ?, nickname = ?, rank = ? 
+        WHERE id = ?
+    `).run(tag_nfc, nickname, rank, req.params.id);
+
     res.json({ ok: true });
 });
 
-app.delete("/api/todos/:id", (req, res) => {
-    db.prepare("DELETE FROM todos WHERE id = ?").run(req.params.id);
+app.delete("/api/users/:id", (req, res) => {
+    db.prepare("DELETE FROM users WHERE id = ?").run(req.params.id);
     res.status(204).end();
 });
+
+
+// ==========================================
+// DUTY ROUTES
+// ==========================================
+
+app.get("/api/duty", (_req, res) => {
+    const duties = db.prepare("SELECT * FROM duty ORDER BY start_time DESC").all();
+    res.json(duties);
+});
+
+app.post("/api/duty", (req, res) => {
+    const { user_id, start_time, end_time } = req.body;
+
+    if (!user_id || !start_time) {
+        return res.status(400).json({ error: "user_id, start_time are required" });
+    }
+
+    const info = db.prepare(`
+        INSERT INTO duty (user_id, start_time, end_time) 
+        VALUES (?, ?, ?)
+    `).run(user_id, start_time, end_time);
+
+    const duty = db.prepare("SELECT * FROM duty WHERE id = ?").get(info.lastInsertRowid);
+    res.status(201).json(duty);
+});
+
+app.put("/api/duty/:id", (req, res) => {
+    const { user_id, start_time, end_time } = req.body;
+
+    if (!user_id || !start_time) {
+        return res.status(400).json({ error: "user_id, start_time are required" });
+    }
+
+    db.prepare(`
+        UPDATE duty 
+        SET user_id = ?, start_time = ?, end_time = ? 
+        WHERE id = ?
+    `).run(user_id, start_time, end_time, req.params.id);
+
+    res.json({ ok: true });
+});
+
+app.delete("/api/duty/:id", (req, res) => {
+    db.prepare("DELETE FROM duty WHERE id = ?").run(req.params.id);
+    res.status(204).end();
+});
+
+
+db.prepare("SELECT 1").get();
 
 const port = Number(process.env.PORT ?? 3001);
 app.listen(port, () => console.log(`API running on http://localhost:${port}`));

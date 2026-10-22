@@ -80,9 +80,9 @@
 
                 <ul class="space-y-2">
                     {#each todos as todo (todo.id)}
-                        <li class="flex items-center justify-between rounded-md border p-2">
-                            <span>{todo.title}</span>
-                            <Button variant="ghost" size="sm" onclick={() => deleteTodo(todo.id)}>Delete</Button>
+                        <li class="flex items-center justify-between rounded-2xl border p-2">
+                            <span class="pl-1">{todo.title}</span>
+                            <Button size="sm" onclick={() => deleteTodo(todo.id)}>Delete</Button>
                         </li>
                     {/each}
                 </ul>
