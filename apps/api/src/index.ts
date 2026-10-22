@@ -8,7 +8,6 @@ dotenv.config();
 
 const app = express();
 const APP_PASSWORD = process.env.APP_PASSWORD ?? "admin";
-console.log(process.env.APP_PASSWORD);
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
