@@ -39,7 +39,7 @@
 				return;
 			}
 
-			setAuthenticated();
+			setAuthenticated(password);
 			await goto(resolve('/dashboard'));
 		} catch {
 			error = 'Nie udało się połączyć z API';

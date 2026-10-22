@@ -2,6 +2,7 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import * as Card from "$lib/components/ui/card/index.js";
+    import { apiFetch } from "$lib/api.js";
 
     type Todo = {
         id: number;
@@ -9,8 +10,6 @@
         done: number;
         created_at: string;
     };
-
-    const API_URL = "http://localhost:3001/api/todos";
 
     let todos = $state<Todo[]>([]);
     let title = $state("");
@@ -22,7 +21,7 @@
         error = "";
 
         try {
-            const response = await fetch(API_URL);
+            const response = await apiFetch("/todos");
             if (!response.ok) throw new Error("load failed");
             todos = await response.json();
         } catch {
@@ -38,7 +37,7 @@
         const cleanTitle = title.trim();
         if (!cleanTitle) return;
 
-        await fetch(API_URL, {
+        await apiFetch("/todos", {
             method: "POST",
             headers: {
                 "content-type": "application/json"
@@ -51,7 +50,7 @@
     }
 
     async function deleteTodo(id: number) {
-        await fetch(`${API_URL}/${id}`, {
+        await apiFetch(`/todos/${id}`, {
             method: "DELETE"
         });
 

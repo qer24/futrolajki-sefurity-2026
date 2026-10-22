@@ -9,7 +9,12 @@ dotenv.config();
 const app = express();
 const APP_PASSWORD = process.env.APP_PASSWORD ?? "admin";
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        allowedHeaders: ["content-type", "x-api-password"]
+    })
+);
 app.use(express.json());
 app.use(
     "/api",
@@ -20,8 +25,6 @@ app.use(
         legacyHeaders: false
     })
 );
-
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 app.post("/api/auth/login", (req, res) => {
     const password = String(req.body?.password ?? "");
@@ -36,6 +39,18 @@ app.post("/api/auth/login", (req, res) => {
 
     return res.json({ ok: true });
 });
+
+app.use("/api", (req, res, next) => {
+    const password = req.header("x-api-password");
+
+    if (password !== APP_PASSWORD) {
+        return res.status(401).json({ ok: false, error: "authentication required" });
+    }
+
+    next();
+});
+
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 app.get("/api/todos", (_req, res) => {
     const todos = db.prepare("SELECT * FROM todos ORDER BY id DESC").all();
