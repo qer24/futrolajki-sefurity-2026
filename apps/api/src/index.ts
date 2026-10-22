@@ -126,6 +126,18 @@ app.post("/api/duty", (req, res) => {
     res.status(201).json(duty);
 });
 
+app.get("/api/duty/active", (_req, res) => {
+    const duties = db.prepare(`
+        SELECT d.id, d.user_id, d.start_time,
+               u.nickname, u.rank, u.tag_nfc
+        FROM duty d
+        JOIN users u ON u.id = d.user_id
+        WHERE d.end_time IS NULL OR d.end_time = ''
+        ORDER BY d.start_time DESC
+    `).all();
+    res.json(duties);
+});
+
 app.put("/api/duty/:id", (req, res) => {
     const { user_id, start_time, end_time } = req.body;
 
