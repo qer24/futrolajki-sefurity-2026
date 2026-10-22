@@ -1,4 +1,8 @@
 <script lang="ts">
+    import { Button } from "$lib/components/ui/button/index.js";
+    import { Input } from "$lib/components/ui/input/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+
     type Todo = {
         id: number;
         title: string;
@@ -46,18 +50,6 @@
         await loadTodos();
     }
 
-    async function toggleTodo(todo: Todo) {
-        await fetch(`${API_URL}/${todo.id}`, {
-            method: "PATCH",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify({ done: !todo.done })
-        });
-
-        await loadTodos();
-    }
-
     async function deleteTodo(id: number) {
         await fetch(`${API_URL}/${id}`, {
             method: "DELETE"
@@ -71,38 +63,31 @@
     });
 </script>
 
-<main class="mx-auto flex min-h-svh w-full max-w-2xl flex-col gap-4 p-6">
-    <h1 class="text-2xl font-bold">Dashboard / Todo test UI</h1>
-
-    <form class="flex gap-2" onsubmit={addTodo}>
-        <input
-            class="w-full rounded border px-3 py-2"
-            bind:value={title}
-            placeholder="Nowe zadanie"
-            required
-        />
-        <button class="rounded bg-black px-4 py-2 text-white" type="submit">Dodaj</button>
-    </form>
-
-    {#if error}
-        <p class="text-sm text-red-500">{error}</p>
-    {/if}
-
+<main class="mx-auto max-w-md p-6">
     {#if loading}
-        <p>Ładowanie...</p>
+        <p>Loading...</p>
+    {:else if error}
+        <p class="text-red-500">{error}</p>
     {:else}
-        <ul class="flex flex-col gap-2">
-            {#each todos as todo (todo.id)}
-                <li class="flex items-center justify-between gap-2 rounded border p-3">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" checked={Boolean(todo.done)} onchange={() => toggleTodo(todo)} />
-                        <span class:line-through={Boolean(todo.done)}>{todo.title}</span>
-                    </label>
-                    <button class="rounded border px-2 py-1 text-sm" type="button" onclick={() => deleteTodo(todo.id)}>
-                        Usuń
-                    </button>
-                </li>
-            {/each}
-        </ul>
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>Todos</Card.Title>
+            </Card.Header>
+            <Card.Content class="space-y-4">
+                <form class="flex gap-2" onsubmit={(e) => { e.preventDefault(); addTodo(e); }}>
+                    <Input bind:value={title} placeholder="What needs doing?" />
+                    <Button type="submit">Add</Button>
+                </form>
+
+                <ul class="space-y-2">
+                    {#each todos as todo (todo.id)}
+                        <li class="flex items-center justify-between rounded-md border p-2">
+                            <span>{todo.title}</span>
+                            <Button variant="ghost" size="sm" onclick={() => deleteTodo(todo.id)}>Delete</Button>
+                        </li>
+                    {/each}
+                </ul>
+            </Card.Content>
+        </Card.Root>
     {/if}
 </main>
