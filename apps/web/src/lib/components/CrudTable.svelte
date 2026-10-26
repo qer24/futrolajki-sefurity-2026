@@ -35,10 +35,21 @@
         loadData();
     });
 
-    function openDialog(item = null) {
+    export function openDialog(item = null) {
         // Just copy the item data directly
         formData = item ? { ...item } : {};
         dialogOpen = true;
+    }
+
+    export async function openById(id) {
+        let item = items.find((i) => i[primaryKey] === id);
+
+        if (!item) {
+            await loadData(); // table may be stale (e.g. user was just added)
+            item = items.find((i) => i[primaryKey] === id);
+        }
+
+        if (item) openDialog(item);
     }
 
     async function saveRecord() {

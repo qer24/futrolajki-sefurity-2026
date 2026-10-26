@@ -19,7 +19,7 @@
     }
 
     let currentLayout = $derived(
-        page.url.pathname.includes('/admin') || page.url.pathname.includes('/dashboard')
+        page.url.pathname.includes('/admin') || page.url.pathname.includes('/dashboard') || page.url.pathname.includes('/logs')
             ? 'default'
             : 'login'
     );
@@ -47,9 +47,20 @@
                     Dashboard
                 </Button>
             </a>
+            <a href="/logs">
+                <Button variant={page.url.pathname.startsWith('/logs') ? 'default' : 'ghost'}>
+                    Logs
+                </Button>
+            </a>
             <a href="/admin">
                 <Button variant={page.url.pathname.startsWith('/admin') ? 'default' : 'ghost'}>
                     Admin
+                </Button>
+            </a>
+            <div></div>
+            <a href="/duty">
+                <Button variant={page.url.pathname.startsWith('/duty') ? 'default' : 'ghost'}>
+                    Duty
                 </Button>
             </a>
         </nav>

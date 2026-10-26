@@ -3,5 +3,6 @@ packages:
   - "packages/*"
 allowBuilds:
   '@hugeicons/svelte': true
+  '@pokusew/pcsclite': true
   better-sqlite3: true
   esbuild: true

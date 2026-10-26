@@ -2,15 +2,14 @@
     import { onMount } from "svelte"; // Import onMount
     import { apiFetch } from "$lib/api.js";
     import CrudTable from "$lib/components/CrudTable.svelte";
+    import NfcStatus from "$lib/components/NfcStatus.svelte";
+    import { nfc } from "$lib/nfc.svelte.js";
 
     // Reusable rank options
     const rankOptions = [
         { value: "porzadkowa", label: "Porządkowa" },
         { value: "info", label: "Info" },
-        { value: "lider", label: "Lider" },
-        { value: "koord", label: "Koordynator" },
-        { value: "org", label: "Organizator" },
-        { value: "sekretarka", label: "Sekretarka" }
+        { value: "dowodca", label: "Dowódca" },
     ];
 
     // --- Users Table Config ---
@@ -56,6 +55,25 @@
         }
     }
 
+    let usersTable = $state();
+    let lastHandledScan = null;
+
+    // React to each new card scan
+    $effect(() => {
+        const card = nfc.card;
+
+        if (!usersTable || !card?.uid || card.scannedAt === lastHandledScan) return;
+        lastHandledScan = card.scannedAt;
+
+        if (card.user) {
+            // Known tag -> edit that user
+            usersTable.openById(card.user.id);
+        } else {
+            // Unknown tag -> create a user with this UID prefilled
+            usersTable.openDialog({ tag_nfc: card.uid });
+        }
+    });
+
     onMount(() => {
         fetchUsersForSelect();
     });
@@ -65,7 +83,9 @@
     <h1 class="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
     <div class="space-y-12">
+        <NfcStatus />
         <CrudTable
+                bind:this={usersTable}
                 title="Users Management"
                 apiEndpoint="/users"
                 {apiFetch}
