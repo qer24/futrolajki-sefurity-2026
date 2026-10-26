@@ -6,54 +6,55 @@
     import { LogIn, LogOut, TriangleAlert } from "@lucide/svelte";
     import { nfc, type ScannedCard } from "$lib/nfc.svelte.js";
 
-    // Called after a tap started / ended a duty, so the page can refresh its list.
     let { onDutyChange }: { onDutyChange?: () => void } = $props();
 
     const DURATION_MS = 10000;
     const TICK_MS = 50;
-    // Ignore scans older than this (e.g. the "last card" snapshot sent when the page loads)
     const MAX_SCAN_AGE_MS = 15_000;
 
     type Kind = "started" | "ended" | "unknown" | "error";
     type View = { kind: Kind; scan: ScannedCard };
 
     const RANK_STYLES: Record<string, string> = {
-        porzadkowa:
-            "border-transparent bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300",
+        porzadkowa: "border-transparent bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300",
         info: "border-transparent bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300",
-        dowodca:
-            "border-transparent bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300"
+        dowodca: "border-transparent bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300"
     };
     const NO_RANK_STYLE = "border-transparent bg-muted text-muted-foreground";
 
+    // Added 'sound' paths to the META object
     const META = {
         started: {
             icon: LogIn,
             title: "Dyżur rozpoczęty",
             alert: "border-green-500 bg-green-50 dark:bg-green-950/60",
             badge: "bg-green-500 text-white",
-            text: "text-green-700 dark:text-green-300"
+            text: "text-green-700 dark:text-green-300",
+            sound: "/sounds/started.ogg"
         },
         ended: {
             icon: LogOut,
             title: "Dyżur zakończony",
             alert: "border-blue-500 bg-blue-50 dark:bg-blue-950/60",
             badge: "bg-blue-500 text-white",
-            text: "text-blue-700 dark:text-blue-300"
+            text: "text-blue-700 dark:text-blue-300",
+            sound: "/sounds/started.ogg"
         },
         unknown: {
             icon: TriangleAlert,
             title: "Nieznana karta",
             alert: "border-red-500 bg-red-50 dark:bg-red-950/60",
             badge: "bg-red-500 text-white",
-            text: "text-red-700 dark:text-red-300"
+            text: "text-red-700 dark:text-red-300",
+            sound: "/sounds/error.ogg"
         },
         error: {
             icon: TriangleAlert,
             title: "Nie udało się zapisać dyżuru",
             alert: "border-red-500 bg-red-50 dark:bg-red-950/60",
             badge: "bg-red-500 text-white",
-            text: "text-red-700 dark:text-red-300"
+            text: "text-red-700 dark:text-red-300",
+            sound: "/sounds/error.ogg"
         }
     } as const;
 
@@ -62,6 +63,13 @@
 
     let timer: ReturnType<typeof setInterval> | undefined;
     let lastSeen = "";
+
+    function playSound(url: string) {
+        const audio = new Audio(url);
+        audio.play().catch((err) => {
+            console.warn("Audio playback failed (likely due to browser autoplay policies):", err);
+        });
+    }
 
     function stopCountdown() {
         if (timer) clearInterval(timer);
@@ -87,7 +95,6 @@
         if (scan.dutyError) return { kind: "error", scan };
         if (scan.duty) return { kind: scan.duty.action, scan };
         if (!scan.user) return { kind: "unknown", scan };
-        // Known user but no duty change (tap ignored by the server cooldown)
         return null;
     }
 
@@ -106,6 +113,10 @@
             if (scan.duty) onDutyChange?.();
 
             current = view;
+
+            // Trigger the sound based on the view kind
+            playSound(META[current.kind].sound);
+
             startCountdown();
         });
     });
@@ -183,7 +194,7 @@
 
             <Alert.Description class="w-full text-base text-foreground flex flex-col items-center gap-4">
                 {#if current.kind === "unknown"}
-                    <p class="text-2xl font-black">UPEWNIJ SIĘ ŻE SKANUJESZ IDENTYFIKATOR SŁUŻBOWY SECURITY (nie uczestnika)</p>
+                    <p class="text-2xl font-black">UPEWNIJ SIĘ ŻE SKANUJESZ KARTĘ SŁUŻBOWĄ SECURITY (nie uczestnika)</p>
                     <p class="text-lg">Ten tag NFC nie jest przypisany do żadnego użytkownika.</p>
                     <p class="text-lg">Napisz do @arcywastooshort</p>
                     <div class="mt-2 text-xl font-mono text-muted-foreground">
