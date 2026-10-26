@@ -183,7 +183,7 @@
 
             <Alert.Description class="w-full text-base text-foreground flex flex-col items-center gap-4">
                 {#if current.kind === "unknown"}
-                    <p class="text-2xl font-black">UPEWNIJ SIĘ ŻE SKANUJESZ KARTĘ SŁUŻBOWĄ SECURITY (nie uczestnika)</p>
+                    <p class="text-2xl font-black">UPEWNIJ SIĘ ŻE SKANUJESZ IDENTYFIKATOR SŁUŻBOWY SECURITY (nie uczestnika)</p>
                     <p class="text-lg">Ten tag NFC nie jest przypisany do żadnego użytkownika.</p>
                     <p class="text-lg">Napisz do @arcywastooshort</p>
                     <div class="mt-2 text-xl font-mono text-muted-foreground">
