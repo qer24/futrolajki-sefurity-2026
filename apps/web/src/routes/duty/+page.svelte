@@ -318,7 +318,7 @@
         <Card.Content class="space-y-4">
             <div class="flex flex-col gap-2 sm:flex-row">
                 <Input
-                        placeholder="Szukaj: nick, tag NFC, czas rozpoczęcia..."
+                        placeholder="Szukaj: nick, czas rozpoczęcia..."
                         bind:value={search}
                         class="sm:flex-1"
                 />
