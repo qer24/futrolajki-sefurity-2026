@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+.git
+.gitignore
+.idea
+.svelte-kit
+build
+dist
+*.db
+*.db-shm
+*.db-wal
+.env
+**/.env
+

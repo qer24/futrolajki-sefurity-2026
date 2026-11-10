@@ -2,6 +2,19 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
+## Docker
+
+From the repository root, start the API and web containers with:
+
+```sh
+docker compose up --build
+```
+
+The web app is available at `http://localhost:4173` and the API at
+`http://localhost:3001`. SQLite data is stored in the `api-data` Docker volume.
+Set `APP_PASSWORD` in the environment before starting Compose to change the
+default application password.
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
