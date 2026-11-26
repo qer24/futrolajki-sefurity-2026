@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Rank } from '$lib/modules/duty/duty-ranks.js';
+	import type { Rank } from '#lib/modules/duty/duty-ranks.js';
 
 	interface Duty {
 		user_id: number;

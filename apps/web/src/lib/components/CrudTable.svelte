@@ -1,12 +1,27 @@
-﻿<script>
+<script lang="ts">
     import { onMount } from "svelte";
 
-    import { Button } from "$lib/components/ui/button";
-    import { Input } from "$lib/components/ui/input";
-    import { Label } from "$lib/components/ui/label";
-    import * as Table from "$lib/components/ui/table";
-    import * as Dialog from "$lib/components/ui/dialog";
-    import * as Select from "$lib/components/ui/select";
+    import { Button } from "#lib/components/ui/button";
+    import { Input } from "#lib/components/ui/input";
+    import { Label } from "#lib/components/ui/label";
+    import * as Table from "#lib/components/ui/table";
+    import * as Dialog from "#lib/components/ui/dialog";
+    import * as Select from "#lib/components/ui/select";
+
+    type DataRecord = Record<string, string | undefined>;
+    type Column = {
+        key: string;
+        label: string;
+        format?: (value: unknown, row: DataRecord) => unknown;
+    };
+    type FieldOption = { value: string; label: string };
+    type Field = {
+        key: string;
+        label: string;
+        type?: "text" | "number" | "datetime-local" | "select";
+        placeholder?: string;
+        options?: FieldOption[];
+    };
 
     let {
         title = "Manage Data",
@@ -16,16 +31,24 @@
         columns = [],
         fields = [],
         onChange = () => {}
+    }: {
+        title?: string;
+        apiEndpoint?: string;
+        apiFetch: (path: string, init?: RequestInit) => Promise<Response>;
+        primaryKey?: string;
+        columns?: Column[];
+        fields?: Field[];
+        onChange?: () => void;
     } = $props();
 
-    let items = $state([]);
+    let items = $state<DataRecord[]>([]);
     let dialogOpen = $state(false);
-    let formData = $state({});
+    let formData = $state<DataRecord>({});
 
     async function loadData() {
         try {
             const response = await apiFetch(apiEndpoint);
-            items = await response.json();
+            items = await response.json() as DataRecord[];
         } catch (error) {
             console.error(`Failed to load data for ${title}:`, error);
         }
@@ -35,18 +58,18 @@
         loadData();
     });
 
-    export function openDialog(item = null) {
+    export function openDialog(item: DataRecord | null = null) {
         // Just copy the item data directly
         formData = item ? { ...item } : {};
         dialogOpen = true;
     }
 
-    export async function openById(id) {
-        let item = items.find((i) => i[primaryKey] === id);
+    export async function openById(id: unknown) {
+        let item = items.find((i: DataRecord) => i[primaryKey] === id);
 
         if (!item) {
             await loadData(); // table may be stale (e.g. user was just added)
-            item = items.find((i) => i[primaryKey] === id);
+            item = items.find((i: DataRecord) => i[primaryKey] === id);
         }
 
         if (item) openDialog(item);
@@ -71,7 +94,7 @@
         }
     }
 
-    async function deleteRecord(id) {
+    async function deleteRecord(id: unknown) {
         if (!confirm("Are you sure you want to delete this record?")) return;
         try {
             await apiFetch(`${apiEndpoint}/${id}`, { method: "DELETE" });
@@ -143,11 +166,11 @@
                                 <Select.Trigger>
                                     <!-- In Svelte 5 shadcn, you may only need standard placeholder text here depending on your exact version -->
                                     {formData[field.key]
-                                        ? field.options.find(o => o.value === formData[field.key])?.label
+                                        ? (field.options ?? []).find(o => o.value === formData[field.key])?.label
                                         : `Select ${field.label.toLowerCase()}`}
                                 </Select.Trigger>
                                 <Select.Content class="max-h-[200px] overflow-y-auto">
-                                    {#each field.options as opt}
+                                    {#each field.options ?? [] as opt}
                                         <Select.Item value={opt.value} label={opt.label}>
                                             {opt.label}
                                         </Select.Item>

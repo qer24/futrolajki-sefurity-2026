@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
-	import DutyDataTable from '$lib/components/duty/DutyDataTable.svelte';
-	import DutyStatGrid from '$lib/components/duty/DutyStatGrid.svelte';
-	import type { ActiveDuty } from '$lib/modules/duty/duty-data.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import DutyDataTable from '#lib/components/duty/DutyDataTable.svelte';
+	import DutyStatGrid from '#lib/components/duty/DutyStatGrid.svelte';
+	import type { ActiveDuty } from '#lib/modules/duty/duty-data.js';
 
 	let {
 		duties,

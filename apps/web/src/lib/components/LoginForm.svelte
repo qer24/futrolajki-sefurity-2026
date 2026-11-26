@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { FieldGroup, Field } from '$lib/components/ui/field/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { setAuthenticated } from '$lib/auth.js';
-	import { cn, type WithElementRef } from '$lib/utils.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { FieldGroup, Field } from '#lib/components/ui/field/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { setAuthenticated } from '#lib/auth.js';
+	import { cn, type WithElementRef } from '#lib/utils.js';
 	import LogIn from '@lucide/svelte/icons/log-in';
 	import type { HTMLAttributes } from 'svelte/elements';
 

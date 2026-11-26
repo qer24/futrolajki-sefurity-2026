@@ -1,12 +1,12 @@
 <script lang="ts">
-	import DutyDataTable from '$lib/components/duty/DutyDataTable.svelte';
-	import ActiveDutySection from '$lib/components/duty/ActiveDutySection.svelte';
+	import DutyDataTable from '#lib/components/duty/DutyDataTable.svelte';
+	import ActiveDutySection from '#lib/components/duty/ActiveDutySection.svelte';
 	import {
 		loadActiveDuties,
 		loadDutyHistory,
 		type ActiveDuty,
 		type EndedDuty
-	} from '$lib/modules/duty/duty-data.js';
+	} from '#lib/modules/duty/duty-data.js';
 
 	let history = $state<EndedDuty[]>([]);
 	let historyLoading = $state(false);

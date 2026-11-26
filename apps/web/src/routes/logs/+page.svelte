@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { ArrowUp, ArrowDown } from '@lucide/svelte';
-	import { apiFetch } from '$lib/api.js';
-	import DutyRankBadge from '$lib/components/duty/DutyRankBadge.svelte';
-	import DutyTableFilters from '$lib/components/duty/DutyTableFilters.svelte';
-	import type { Rank } from '$lib/modules/duty/duty-ranks.js';
+	import { apiFetch } from '#lib/api.js';
+	import DutyRankBadge from '#lib/components/duty/DutyRankBadge.svelte';
+	import DutyTableFilters from '#lib/components/duty/DutyTableFilters.svelte';
+	import type { Rank } from '#lib/modules/duty/duty-ranks.js';
 
 	type LogType = 'start' | 'end';
 

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Input } from '$lib/components/ui/input';
-	import DutyRankSelect from '$lib/components/duty/DutyRankSelect.svelte';
-	import type { Rank } from '$lib/modules/duty/duty-ranks.js';
+	import { Input } from '#lib/components/ui/input';
+	import DutyRankSelect from '#lib/components/duty/DutyRankSelect.svelte';
+	import type { Rank } from '#lib/modules/duty/duty-ranks.js';
 
 	let {
 		search = $bindable(),

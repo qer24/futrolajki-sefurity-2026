@@ -1,10 +1,10 @@
-﻿<script lang="ts">
+<script lang="ts">
     import { onDestroy, untrack } from "svelte";
-    import * as Alert from "$lib/components/ui/alert";
-    import { Progress } from "$lib/components/ui/progress";
+    import * as Alert from "#lib/components/ui/alert";
+    import { Progress } from "#lib/components/ui/progress";
     import { LogIn, LogOut, TriangleAlert } from "@lucide/svelte";
-    import { nfc, type ScannedCard } from "$lib/nfc.svelte.js";
-    import DutyRankBadge from "$lib/components/duty/DutyRankBadge.svelte";
+    import { nfc, type ScannedCard } from "#lib/nfc.svelte.js";
+    import DutyRankBadge from "#lib/components/duty/DutyRankBadge.svelte";
 
     let { onDutyChange }: { onDutyChange?: () => void } = $props();
 

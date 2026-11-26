@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Badge } from '$lib/components/ui/badge';
-	import { rankStyle } from '$lib/modules/duty/duty-ranks.js';
+	import { Badge } from '#lib/components/ui/badge';
+	import { rankStyle } from '#lib/modules/duty/duty-ranks.js';
 
 	let {
 		rank,

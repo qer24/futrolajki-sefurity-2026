@@ -1,14 +1,14 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import Moon from '@lucide/svelte/icons/moon';
 	import Sun from '@lucide/svelte/icons/sun';
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import Shield from '@lucide/svelte/icons/shield';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { modules } from '$lib/modules/registry.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { modules } from '#lib/modules/registry.js';
 
 	let isDark = $state(false);
 

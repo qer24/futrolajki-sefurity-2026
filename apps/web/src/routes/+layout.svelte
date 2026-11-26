@@ -2,8 +2,8 @@
     import './layout.css';
     import favicon from '#lib/assets/favicon.svg';
     import type { LayoutProps } from './$types';
-    import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-    import AppSidebar from "$lib/components/AppSidebar.svelte";
+    import * as Sidebar from "#lib/components/ui/sidebar/index.js";
+    import AppSidebar from "#lib/components/AppSidebar.svelte";
 
     let { children }: LayoutProps = $props();
 </script>

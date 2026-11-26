@@ -1,10 +1,10 @@
 <script lang="ts">
-	import * as Pagination from '$lib/components/ui/pagination';
-	import * as Table from '$lib/components/ui/table';
+	import * as Pagination from '#lib/components/ui/pagination';
+	import * as Table from '#lib/components/ui/table';
 	import { ArrowDown, ArrowUp, ArrowUpDown } from '@lucide/svelte';
-	import DutyRankBadge from '$lib/components/duty/DutyRankBadge.svelte';
-	import DutyTableFilters from '$lib/components/duty/DutyTableFilters.svelte';
-	import { RANKS, type Rank } from '$lib/modules/duty/duty-ranks.js';
+	import DutyRankBadge from '#lib/components/duty/DutyRankBadge.svelte';
+	import DutyTableFilters from '#lib/components/duty/DutyTableFilters.svelte';
+	import { RANKS, type Rank } from '#lib/modules/duty/duty-ranks.js';
 
 	interface Duty {
 		id: number;

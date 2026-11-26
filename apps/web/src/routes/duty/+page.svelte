@@ -1,8 +1,8 @@
 <script lang="ts">
-	import NfcStatus from '$lib/components/NfcStatus.svelte';
-	import DutyScanAlert from '$lib/components/duty/DutyScanAlert.svelte';
-	import ActiveDutySection from '$lib/components/duty/ActiveDutySection.svelte';
-	import { loadActiveDuties, type ActiveDuty } from '$lib/modules/duty/duty-data.js';
+	import NfcStatus from '#lib/components/NfcStatus.svelte';
+	import DutyScanAlert from '#lib/components/duty/DutyScanAlert.svelte';
+	import ActiveDutySection from '#lib/components/duty/ActiveDutySection.svelte';
+	import { loadActiveDuties, type ActiveDuty } from '#lib/modules/duty/duty-data.js';
 
 	let duties = $state<ActiveDuty[]>([]);
 	let loading = $state(false);

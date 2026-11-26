@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Select from '$lib/components/ui/select';
-	import { RANKS, RANK_DOTS, type Rank } from '$lib/modules/duty/duty-ranks.js';
+	import * as Select from '#lib/components/ui/select';
+	import { RANKS, RANK_DOTS, type Rank } from '#lib/modules/duty/duty-ranks.js';
 
 	let { value = $bindable() }: { value: Rank | 'all' } = $props();
 </script>

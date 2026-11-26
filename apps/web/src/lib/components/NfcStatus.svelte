@@ -1,6 +1,6 @@
-﻿<script>
+<script>
     import { onMount } from "svelte";
-    import { nfc, startNfcStream, stopNfcStream } from "$lib/nfc.svelte.js";
+    import { nfc, startNfcStream, stopNfcStream } from "#lib/nfc.svelte.js";
 
     onMount(() => {
         startNfcStream();
