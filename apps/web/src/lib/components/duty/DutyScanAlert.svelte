@@ -1,10 +1,10 @@
 ﻿<script lang="ts">
     import { onDestroy, untrack } from "svelte";
-    import * as Alert from "$lib/components/ui/alert/index.js";
-    import { Badge } from "$lib/components/ui/badge/index.js";
-    import { Progress } from "$lib/components/ui/progress/index.js";
+    import * as Alert from "$lib/components/ui/alert";
+    import { Progress } from "$lib/components/ui/progress";
     import { LogIn, LogOut, TriangleAlert } from "@lucide/svelte";
     import { nfc, type ScannedCard } from "$lib/nfc.svelte.js";
+    import DutyRankBadge from "$lib/components/duty/DutyRankBadge.svelte";
 
     let { onDutyChange }: { onDutyChange?: () => void } = $props();
 
@@ -14,13 +14,6 @@
 
     type Kind = "started" | "ended" | "unknown" | "error";
     type View = { kind: Kind; scan: ScannedCard };
-
-    const RANK_STYLES: Record<string, string> = {
-        porzadkowa: "border-transparent bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300",
-        info: "border-transparent bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300",
-        dowodca: "border-transparent bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300"
-    };
-    const NO_RANK_STYLE = "border-transparent bg-muted text-muted-foreground";
 
     // Added 'sound' paths to the META object
     const META = {
@@ -208,12 +201,7 @@
                     {#if scan.user}
                         <div class="flex items-center gap-3 text-3xl font-semibold my-2">
                             <span>{scan.user.nickname}</span>
-                            <Badge
-                                    variant="outline"
-                                    class="text-lg px-3 py-1 {RANK_STYLES[scan.user.rank] ?? NO_RANK_STYLE}"
-                            >
-                                {scan.user.rank}
-                            </Badge>
+                            <DutyRankBadge rank={scan.user.rank} class="text-lg px-3 py-1" />
                         </div>
                     {/if}
 

@@ -79,7 +79,7 @@
     });
 </script>
 
-<div class="container mx-auto py-8">
+<div class="w-full px-6 py-8 lg:px-10">
     <h1 class="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
     <div class="space-y-12">
