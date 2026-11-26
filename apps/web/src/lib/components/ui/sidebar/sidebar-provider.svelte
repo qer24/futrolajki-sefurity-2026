@@ -1,14 +1,10 @@
 <script lang="ts">
-	import * as Tooltip from "#lib/components/ui/tooltip/index.js";
-	import { cn, type WithElementRef } from "#lib/utils.js";
-	import {
-		SIDEBAR_COOKIE_MAX_AGE,
-		SIDEBAR_COOKIE_NAME,
-		SIDEBAR_WIDTH,
-		SIDEBAR_WIDTH_ICON,
-	} from "./constants.js";
-	import { setSidebar } from "./context.svelte.js";
-	import type { HTMLAttributes } from "svelte/elements";
+	import { onMount } from 'svelte';
+	import * as Tooltip from '#lib/components/ui/tooltip/index.js';
+	import { cn, type WithElementRef } from '#lib/utils.js';
+	import { SIDEBAR_STORAGE_KEY, SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON } from './constants.js';
+	import { setSidebar } from './context.svelte.js';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
 		ref = $bindable(null),
@@ -23,15 +19,27 @@
 		onOpenChange?: (open: boolean) => void;
 	} = $props();
 
+	let isReady = $state(false);
+
+	onMount(() => {
+		const storedOpen = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+		if (storedOpen === 'true' || storedOpen === 'false') {
+			open = storedOpen === 'true';
+		}
+
+		requestAnimationFrame(() => {
+			isReady = true;
+		});
+	});
+
 	const sidebar = setSidebar({
+		isReady: () => isReady,
 		open: () => open,
 		setOpen: (value: boolean) => {
 			open = value;
 			onOpenChange(value);
-
-			// This sets the cookie to keep the sidebar state.
-			document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
-		},
+			localStorage.setItem(SIDEBAR_STORAGE_KEY, String(value));
+		}
 	});
 </script>
 
@@ -42,7 +50,7 @@
 		data-slot="sidebar-wrapper"
 		style="--sidebar-width: {SIDEBAR_WIDTH}; --sidebar-width-icon: {SIDEBAR_WIDTH_ICON}; {style}"
 		class={cn(
-			"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
+			'group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar',
 			className
 		)}
 		bind:this={ref}

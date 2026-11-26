@@ -1,10 +1,16 @@
 ﻿<script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import Moon from '@lucide/svelte/icons/moon';
+	import Sun from '@lucide/svelte/icons/sun';
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import Shield from '@lucide/svelte/icons/shield';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { modules } from '$lib/modules/registry.js';
+
+	let isDark = $state(false);
 
 	const sections = $state(
 		modules.map((module) => ({
@@ -14,10 +20,21 @@
 	);
 
 	const isActive = (href: string) => page.url.pathname.startsWith(href);
+
+	onMount(() => {
+		isDark = localStorage.getItem('theme') === 'dark';
+		document.documentElement.classList.toggle('dark', isDark);
+	});
+
+	function toggleTheme() {
+		isDark = !isDark;
+		document.documentElement.classList.toggle('dark', isDark);
+		localStorage.setItem('theme', isDark ? 'dark' : 'light');
+	}
 </script>
 
 <Sidebar.Root collapsible="icon">
-	<Sidebar.Header class="border-b">
+	<Sidebar.Header class="h-14 shrink-0 border-b">
 		<a
 			href="/dashboard"
 			class="flex h-10 items-center gap-3 rounded-lg px-2 font-semibold group-data-[collapsible=icon]:justify-center"
@@ -65,17 +82,34 @@
 	</Sidebar.Content>
 	<Sidebar.Footer class="border-t">
 		<div
-			class="flex items-center gap-3 rounded-lg p-2 group-data-[collapsible=icon]:justify-center"
+			class="flex items-center gap-1 rounded-lg p-1 group-data-[collapsible=icon]:justify-center"
 		>
-			<span
-				class="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground"
+			<div class="flex min-w-0 flex-1 items-center gap-3 p-1 group-data-[collapsible=icon]:hidden">
+				<span
+					class="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground"
+				>
+					<UserRound class="size-4" />
+				</span>
+				<span class="min-w-0 group-data-[collapsible=icon]:hidden">
+					<span class="block truncate text-sm font-medium">Administrator</span>
+					<span class="block truncate text-xs text-muted-foreground">Futrolajki</span>
+				</span>
+			</div>
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				class="shrink-0"
+				aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+				aria-pressed={isDark}
+				title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+				onclick={toggleTheme}
 			>
-				<UserRound class="size-4" />
-			</span>
-			<span class="min-w-0 group-data-[collapsible=icon]:hidden">
-				<span class="block truncate text-sm font-medium">Administrator</span>
-				<span class="block truncate text-xs text-muted-foreground">Futrolajki</span>
-			</span>
+				{#if isDark}
+					<Sun class="size-4" />
+				{:else}
+					<Moon class="size-4" />
+				{/if}
+			</Button>
 		</div>
 	</Sidebar.Footer>
 </Sidebar.Root>
