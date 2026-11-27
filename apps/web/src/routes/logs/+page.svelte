@@ -218,7 +218,7 @@
 								{group.label}
 							</h3>
 
-							<ul class="divide-y border-y">
+							<ul class="divide-y overflow-hidden rounded-md border bg-card text-card-foreground">
 								{#each group.events as event (event.key)}
 									<li class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-sm">
 										<span class="font-mono text-xs text-muted-foreground tabular-nums">

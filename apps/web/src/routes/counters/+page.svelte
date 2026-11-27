@@ -179,10 +179,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Liczniki osób</title>
-</svelte:head>
-
 {#if moduleStatus === 'loading'}
 	<p class="px-6 py-8 text-sm" role="status">Ładowanie modułu…</p>
 {:else if moduleStatus === 'error'}
@@ -190,10 +186,7 @@
 {/if}
 
 <section class="w-full px-6 py-8 lg:px-10" hidden={moduleStatus !== 'enabled'}>
-	<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-		<div>
-			<h1 class="text-3xl font-bold">Liczniki osób</h1>
-		</div>
+	<div class="mb-6 flex flex-wrap items-center justify-end gap-4">
 		<Button onclick={openAddDialog}><Plus /> Dodaj licznik</Button>
 	</div>
 

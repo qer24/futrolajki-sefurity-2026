@@ -113,39 +113,37 @@
         <Button onclick={() => openDialog()}>Add Record</Button>
     </div>
 
-    <div class="rounded-md border bg-card text-card-foreground">
-        <Table.Root>
-            <Table.Header>
+    <Table.Root>
+        <Table.Header>
+            <Table.Row>
+                {#each columns as col}
+                    <Table.Head>{col.label}</Table.Head>
+                {/each}
+                <Table.Head class="text-right">Actions</Table.Head>
+            </Table.Row>
+        </Table.Header>
+        <Table.Body>
+            {#each items as row}
                 <Table.Row>
                     {#each columns as col}
-                        <Table.Head>{col.label}</Table.Head>
+                        <Table.Cell>
+                            {col.format ? col.format(row[col.key], row) : row[col.key]}
+                        </Table.Cell>
                     {/each}
-                    <Table.Head class="text-right">Actions</Table.Head>
+                    <Table.Cell class="text-right flex justify-end gap-2">
+                        <Button variant="outline" size="sm" onclick={() => openDialog(row)}>Edit</Button>
+                        <Button variant="destructive" size="sm" onclick={() => deleteRecord(row[primaryKey])}>Delete</Button>
+                    </Table.Cell>
                 </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                {#each items as row}
-                    <Table.Row>
-                        {#each columns as col}
-                            <Table.Cell>
-                                {col.format ? col.format(row[col.key], row) : row[col.key]}
-                            </Table.Cell>
-                        {/each}
-                        <Table.Cell class="text-right flex justify-end gap-2">
-                            <Button variant="outline" size="sm" onclick={() => openDialog(row)}>Edit</Button>
-                            <Button variant="destructive" size="sm" onclick={() => deleteRecord(row[primaryKey])}>Delete</Button>
-                        </Table.Cell>
-                    </Table.Row>
-                {:else}
-                    <Table.Row>
-                        <Table.Cell colspan={columns.length + 1} class="text-center py-4 text-muted-foreground">
-                            No records found.
-                        </Table.Cell>
-                    </Table.Row>
-                {/each}
-            </Table.Body>
-        </Table.Root>
-    </div>
+            {:else}
+                <Table.Row>
+                    <Table.Cell colspan={columns.length + 1} class="text-center py-4 text-muted-foreground">
+                        No records found.
+                    </Table.Cell>
+                </Table.Row>
+            {/each}
+        </Table.Body>
+    </Table.Root>
 </div>
 
 <!-- Modal Dialog -->

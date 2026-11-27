@@ -164,55 +164,53 @@
 	{:else if error}
 		<p class="text-red-500">{error}</p>
 	{:else}
-		<div class="border-y">
-			<Table.Root>
-				<Table.Header>
+		<Table.Root>
+			<Table.Header>
+				<Table.Row>
+					{@render sortHead('Nick', 'nickname')}
+					{@render sortHead('Ranga', 'rank')}
+					{@render sortHead('Początek', 'start_time')}
+					{#if history}
+						{@render sortHead('Koniec', 'end_time')}
+						{@render sortHead('Czas trwania', 'length')}
+					{/if}
+					{#if showTag}
+						{@render sortHead('Badge NFC ID', 'tag_nfc')}
+					{/if}
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each paged as duty (duty.id)}
 					<Table.Row>
-						{@render sortHead('Nick', 'nickname')}
-						{@render sortHead('Ranga', 'rank')}
-						{@render sortHead('Początek', 'start_time')}
+						<Table.Cell class="font-medium">{duty.nickname}</Table.Cell>
+						<Table.Cell><DutyRankBadge rank={duty.rank} /></Table.Cell>
+						<Table.Cell class="font-mono text-xs">
+							{formatTime(duty.start_time)}
+						</Table.Cell>
 						{#if history}
-							{@render sortHead('Koniec', 'end_time')}
-							{@render sortHead('Czas trwania', 'length')}
+							<Table.Cell class="font-mono text-xs">
+								{formatTime(duty.end_time ?? '')}
+							</Table.Cell>
+							<Table.Cell class="font-mono text-xs">
+								{formatDuration(duty.start_time, duty.end_time ?? '')}
+							</Table.Cell>
 						{/if}
 						{#if showTag}
-							{@render sortHead('Badge NFC ID', 'tag_nfc')}
+							<Table.Cell class="font-mono text-xs">{duty.tag_nfc}</Table.Cell>
 						{/if}
 					</Table.Row>
-				</Table.Header>
-				<Table.Body>
-					{#each paged as duty (duty.id)}
-						<Table.Row>
-							<Table.Cell class="font-medium">{duty.nickname}</Table.Cell>
-							<Table.Cell><DutyRankBadge rank={duty.rank} /></Table.Cell>
-							<Table.Cell class="font-mono text-xs">
-								{formatTime(duty.start_time)}
-							</Table.Cell>
-							{#if history}
-								<Table.Cell class="font-mono text-xs">
-									{formatTime(duty.end_time ?? '')}
-								</Table.Cell>
-								<Table.Cell class="font-mono text-xs">
-									{formatDuration(duty.start_time, duty.end_time ?? '')}
-								</Table.Cell>
-							{/if}
-							{#if showTag}
-								<Table.Cell class="font-mono text-xs">{duty.tag_nfc}</Table.Cell>
-							{/if}
-						</Table.Row>
-					{:else}
-						<Table.Row>
-							<Table.Cell
-								colspan={3 + (history ? 2 : 0) + (showTag ? 1 : 0)}
-								class="h-24 text-center text-muted-foreground"
-							>
-								{emptyMessage}
-							</Table.Cell>
-						</Table.Row>
-					{/each}
-				</Table.Body>
-			</Table.Root>
-		</div>
+				{:else}
+					<Table.Row>
+						<Table.Cell
+							colspan={3 + (history ? 2 : 0) + (showTag ? 1 : 0)}
+							class="h-24 text-center text-muted-foreground"
+						>
+							{emptyMessage}
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
 
 		{#if filtered.length > PAGE_SIZE}
 			<Pagination.Root count={filtered.length} perPage={PAGE_SIZE} bind:page>
