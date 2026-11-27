@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
@@ -8,22 +9,48 @@
 	import UserRound from '@lucide/svelte/icons/user-round';
 	import Shield from '@lucide/svelte/icons/shield';
 	import { Button } from '#lib/components/ui/button/index.js';
+	import { loadModuleAvailability } from '#lib/modules/availability.js';
 	import { modules } from '#lib/modules/registry.js';
 
+	const sidebar = Sidebar.useSidebar();
 	let isDark = $state(false);
+	let moduleConfigError = $state('');
 
-	const sections = $state(
-		modules.map((module) => ({
-			...module,
-			expanded: true
-		}))
+	let sections = $state(
+		modules
+			.filter((module) => module.id !== 'counters')
+			.map((module) => ({
+				...module,
+				expanded: true
+			}))
 	);
 
+	async function loadSections() {
+		try {
+			const availability = await loadModuleAvailability();
+			sections = modules
+				.filter((module) => module.id !== 'counters' || availability.counters)
+				.map((module) => ({
+					...module,
+					expanded: true
+				}));
+		} catch {
+			moduleConfigError = 'Nie udało się załadować konfiguracji modułów.';
+		}
+	}
+
 	const isActive = (href: string) => page.url.pathname.startsWith(href);
+
+	function closeMobileSidebar() {
+		if (sidebar.isMobile) {
+			sidebar.setOpenMobile(false);
+		}
+	}
 
 	onMount(() => {
 		isDark = localStorage.getItem('theme') === 'dark';
 		document.documentElement.classList.toggle('dark', isDark);
+		void loadSections();
 	});
 
 	function toggleTheme() {
@@ -36,8 +63,9 @@
 <Sidebar.Root collapsible="icon">
 	<Sidebar.Header class="h-14 shrink-0 border-b">
 		<a
-			href="/dashboard"
+			href={resolve('/dashboard')}
 			class="flex h-10 items-center gap-3 rounded-lg px-2 font-semibold group-data-[collapsible=icon]:justify-center"
+			onclick={closeMobileSidebar}
 		>
 			<span
 				class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"
@@ -48,6 +76,9 @@
 		</a>
 	</Sidebar.Header>
 	<Sidebar.Content>
+		{#if moduleConfigError}
+			<p class="px-3 py-2 text-xs text-destructive" role="alert">{moduleConfigError}</p>
+		{/if}
 		{#each sections as section (section.title)}
 			<Sidebar.Group>
 				<button
@@ -64,9 +95,13 @@
 						<Sidebar.Menu>
 							{#each section.items as item (item.href)}
 								<Sidebar.MenuItem>
-									<Sidebar.MenuButton isActive={isActive(item.href)} tooltipContent={item.title}>
+									<Sidebar.MenuButton
+										isActive={isActive(item.href)}
+										tooltipContent={item.title}
+										onclick={closeMobileSidebar}
+									>
 										{#snippet child({ props })}
-											<a href={item.href} {...props}>
+											<a href={resolve(item.href)} {...props}>
 												<item.icon />
 												<span>{item.title}</span>
 											</a>

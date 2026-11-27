@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { apiFetch } from '#lib/api.js';
+	import { loadModuleAvailability } from '#lib/modules/availability.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import * as Dialog from '#lib/components/ui/dialog/index.js';
@@ -34,6 +37,7 @@
 	let counterName = $state('');
 	let maxCount = $state('');
 	let reverseButtons = $state(false);
+	let moduleStatus = $state<'loading' | 'enabled' | 'disabled' | 'error'>('loading');
 	let countAnimation = $state<Record<number, 'increment' | 'decrement'>>({});
 	const controlOrderStorageKey = 'counters-reverse-control-order';
 
@@ -152,9 +156,26 @@
 		localStorage.setItem(controlOrderStorageKey, String(reverseButtons));
 	}
 
-	onMount(() => {
+	async function initializePage() {
 		reverseButtons = localStorage.getItem(controlOrderStorageKey) === 'true';
-		void loadCounters();
+		try {
+			const availability = await loadModuleAvailability();
+			if (!availability.counters) {
+				moduleStatus = 'disabled';
+				await goto(resolve('/dashboard'), { replaceState: true });
+				return;
+			}
+			moduleStatus = 'enabled';
+			await loadCounters();
+		} catch (cause) {
+			moduleStatus = 'error';
+			loading = false;
+			error = cause instanceof Error ? cause.message : 'Unable to load module availability.';
+		}
+	}
+
+	onMount(() => {
+		void initializePage();
 	});
 </script>
 
@@ -162,7 +183,13 @@
 	<title>Liczniki osób</title>
 </svelte:head>
 
-<section class="w-full px-6 py-8 lg:px-10">
+{#if moduleStatus === 'loading'}
+	<p class="px-6 py-8 text-sm" role="status">Ładowanie modułu…</p>
+{:else if moduleStatus === 'error'}
+	<p class="px-6 py-8 text-sm text-destructive" role="alert">{error}</p>
+{/if}
+
+<section class="w-full px-6 py-8 lg:px-10" hidden={moduleStatus !== 'enabled'}>
 	<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
 		<div>
 			<h1 class="text-3xl font-bold">Liczniki osób</h1>
@@ -199,7 +226,7 @@
 							<div class="flex shrink-0 gap-1">
 								<Button
 									aria-label={`Edytuj ${counter.name}`}
-                                    variant="outline"
+									variant="outline"
 									size="lg"
 									title="Edytuj"
 									disabled={busyCounterId === counter.id}
@@ -207,7 +234,7 @@
 								>
 								<Button
 									aria-label={`Usuń ${counter.name}`}
-                                    variant="destructive"
+									variant="destructive"
 									size="lg"
 									title="Usuń"
 									disabled={busyCounterId === counter.id}
@@ -258,7 +285,7 @@
 					</Card.Content>
 					<Card.Footer class="flex items-end justify-between gap-2 text-xs">
 						<div class="flex flex-col items-start gap-1">
-                            <span>Utworzono: {formatDate(counter.created_at)} ({counter.created_by})</span>
+							<span>Utworzono: {formatDate(counter.created_at)} ({counter.created_by})</span>
 							<span>Ostatnia zmiana: {formatDate(counter.last_edit)} ({counter.created_by})</span>
 						</div>
 						<Button

@@ -16,7 +16,10 @@ dotenv.config();
 
 initializePeopleSchema();
 initializeDutySchema();
-initializeCountersSchema();
+const countersEnabled = process.env.COUNTERS_ENABLED?.trim().toLowerCase() !== "false";
+if (countersEnabled) {
+    initializeCountersSchema();
+}
 db.prepare("SELECT 1").get();
 
 const app = express();
@@ -38,7 +41,12 @@ app.use(
 );
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
-app.use("/api", peopleRoutes, dutyRoutes, counterRoutes, nfcRoutes);
+app.get("/api/modules", (_req, res) => res.json({ counters: countersEnabled }));
+app.use("/api", peopleRoutes, dutyRoutes);
+if (countersEnabled) {
+    app.use("/api", counterRoutes);
+}
+app.use("/api", nfcRoutes);
 
 const port = Number(process.env.PORT ?? 3001);
 app.listen(port, () => console.log(`API running on http://localhost:${port}`));
