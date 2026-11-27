@@ -2,6 +2,7 @@
 	import NfcStatus from '#lib/components/NfcStatus.svelte';
 	import DutyScanAlert from '#lib/components/duty/DutyScanAlert.svelte';
 	import ActiveDutySection from '#lib/components/duty/ActiveDutySection.svelte';
+	import DutyStatGrid from '#lib/components/duty/DutyStatGrid.svelte';
 	import { loadActiveDuties, type ActiveDuty } from '#lib/modules/duty/duty-data.js';
 
 	let duties = $state<ActiveDuty[]>([]);
@@ -38,8 +39,10 @@
 		<NfcStatus />
 	</div>
 
+	<DutyStatGrid {duties} />
 	<ActiveDutySection
 		{duties}
+		storageKey="/duty:active"
 		{loading}
 		{error}
 		searchTag

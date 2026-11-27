@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
 
+    import CollapsibleSection from "#lib/components/CollapsibleSection.svelte";
     import { Button } from "#lib/components/ui/button";
     import { Input } from "#lib/components/ui/input";
     import { Label } from "#lib/components/ui/label";
@@ -25,6 +26,7 @@
 
     let {
         title = "Manage Data",
+        storageKey,
         apiEndpoint = "",
         apiFetch,
         primaryKey = "id",
@@ -33,6 +35,7 @@
         onChange = () => {}
     }: {
         title?: string;
+        storageKey: string;
         apiEndpoint?: string;
         apiFetch: (path: string, init?: RequestInit) => Promise<Response>;
         primaryKey?: string;
@@ -106,44 +109,45 @@
     }
 </script>
 
-<div class="my-6">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">{title}</h2>
-        <!-- Svelte 5 uses standard onclick attributes without the colon -->
-        <Button onclick={() => openDialog()}>Add Record</Button>
-    </div>
-
-    <Table.Root>
-        <Table.Header>
-            <Table.Row>
-                {#each columns as col}
-                    <Table.Head>{col.label}</Table.Head>
-                {/each}
-                <Table.Head class="text-right">Actions</Table.Head>
-            </Table.Row>
-        </Table.Header>
-        <Table.Body>
-            {#each items as row}
-                <Table.Row>
-                    {#each columns as col}
-                        <Table.Cell>
-                            {col.format ? col.format(row[col.key], row) : row[col.key]}
-                        </Table.Cell>
+<div>
+    <CollapsibleSection {title} titleClass="text-xl font-semibold" {storageKey}>
+        {#snippet actions()}
+            <Button onclick={() => openDialog()}>Add Record</Button>
+        {/snippet}
+        {#snippet children()}
+            <Table.Root>
+                <Table.Header>
+                    <Table.Row>
+                        {#each columns as col}
+                            <Table.Head>{col.label}</Table.Head>
+                        {/each}
+                        <Table.Head class="text-right">Actions</Table.Head>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {#each items as row}
+                        <Table.Row>
+                            {#each columns as col}
+                                <Table.Cell>
+                                    {col.format ? col.format(row[col.key], row) : row[col.key]}
+                                </Table.Cell>
+                            {/each}
+                            <Table.Cell class="text-right flex justify-end gap-2">
+                                <Button variant="outline" size="sm" onclick={() => openDialog(row)}>Edit</Button>
+                                <Button variant="destructive" size="sm" onclick={() => deleteRecord(row[primaryKey])}>Delete</Button>
+                            </Table.Cell>
+                        </Table.Row>
+                    {:else}
+                        <Table.Row>
+                            <Table.Cell colspan={columns.length + 1} class="text-center py-4 text-muted-foreground">
+                                No records found.
+                            </Table.Cell>
+                        </Table.Row>
                     {/each}
-                    <Table.Cell class="text-right flex justify-end gap-2">
-                        <Button variant="outline" size="sm" onclick={() => openDialog(row)}>Edit</Button>
-                        <Button variant="destructive" size="sm" onclick={() => deleteRecord(row[primaryKey])}>Delete</Button>
-                    </Table.Cell>
-                </Table.Row>
-            {:else}
-                <Table.Row>
-                    <Table.Cell colspan={columns.length + 1} class="text-center py-4 text-muted-foreground">
-                        No records found.
-                    </Table.Cell>
-                </Table.Row>
-            {/each}
-        </Table.Body>
-    </Table.Root>
+                </Table.Body>
+            </Table.Root>
+        {/snippet}
+    </CollapsibleSection>
 </div>
 
 <!-- Modal Dialog -->

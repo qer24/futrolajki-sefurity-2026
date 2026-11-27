@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CollapsibleSection from '#lib/components/CollapsibleSection.svelte';
+	import DutyStatGrid from '#lib/components/duty/DutyStatGrid.svelte';
 	import DutyDataTable from '#lib/components/duty/DutyDataTable.svelte';
 	import ActiveDutySection from '#lib/components/duty/ActiveDutySection.svelte';
 	import {
@@ -57,8 +59,10 @@
 </script>
 
 <div class="w-full">
+	<DutyStatGrid {duties} />
 	<ActiveDutySection
 		{duties}
+		storageKey="/dashboard:active"
 		{loading}
 		{error}
 		refreshDisabled={historyLoading}
@@ -68,23 +72,25 @@
 		onRefresh={refresh}
 	/>
 
-	<section class="border-t px-6 py-8 lg:px-10">
-		<div class="mb-4">
-			<h2 class="text-lg font-semibold">Historia dyżurów</h2>
-			<p class="text-sm text-muted-foreground">
-				{history.length} zakończonych
-			</p>
-		</div>
+    <hr>
 
-		<DutyDataTable
-			duties={history}
-			loading={historyLoading}
-			error={historyError}
-			history
-			showTag
-			searchTag
-			searchPlaceholder="Szukaj: nick, tag NFC, początek, koniec..."
-			emptyMessage="Brak zakończonych dyżurów"
-		/>
-	</section>
+	<div class="px-6 py-4 lg:px-10">
+		<CollapsibleSection title="Historia dyżurów" storageKey="/dashboard:history">
+			{#snippet actions()}
+				<p class="text-sm text-muted-foreground">{history.length} zakończonych</p>
+			{/snippet}
+			{#snippet children()}
+				<DutyDataTable
+					duties={history}
+					loading={historyLoading}
+					error={historyError}
+					history
+					showTag
+					searchTag
+					searchPlaceholder="Szukaj: nick, tag NFC, początek, koniec..."
+					emptyMessage="Brak zakończonych dyżurów"
+				/>
+			{/snippet}
+		</CollapsibleSection>
+	</div>
 </div>

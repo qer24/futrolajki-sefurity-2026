@@ -93,21 +93,33 @@
     });
 </script>
 
-<div class="w-full px-6 py-8 lg:px-10">
-    <div class="space-y-12">
+<div class="w-full">
+    <div class="px-6 py-4 lg:px-10">
         <NfcStatus />
+    </div>
+
+    <hr>
+
+    <div class="px-6 py-4 lg:px-10">
         <CrudTable
                 bind:this={usersTable}
                 title="Users Management"
+                storageKey="/admin:users"
                 apiEndpoint="/users"
                 {apiFetch}
                 columns={userColumns}
                 fields={userFields}
                 onChange={fetchUsersForSelect}
         />
+    </div>
 
+
+    <hr>
+
+    <div class="px-6 py-4 lg:px-10">
         <CrudTable
                 title="Duty Roster"
+                storageKey="/admin:duty"
                 apiEndpoint="/duty"
                 {apiFetch}
                 columns={dutyColumns}
